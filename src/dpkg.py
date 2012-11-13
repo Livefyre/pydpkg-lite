@@ -44,7 +44,8 @@ def main(root_path, package_file=None):
         full_deb = os.path.join(root_path, deb)
         out = subprocess.check_output(['dpkg-deb', '-I', full_deb, 'control'])
         size = os.stat(full_deb).st_size
-        out_formatted = re.sub(r"^(Version: .*$)", r"\1\nFilename: %s\nSize: %s" % (deb, size), out, flags=re.M)
+        md5sum = subprocess.check_output(['md5sum', full_deb]).split(" ")[0]
+        out_formatted = re.sub(r"^(Version: .*$)", r"\1\nFilename: %s\nSize: %s\nMD5sum: %s" % (deb, size, md5sum), out, flags=re.M)
         output += "\n%s" % out_formatted
 
     print output

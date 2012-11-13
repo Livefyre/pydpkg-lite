@@ -1,0 +1,4 @@
+*.swp
+pool
+.project
+.pydevproject

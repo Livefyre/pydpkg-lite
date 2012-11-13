@@ -22,8 +22,10 @@ def get_existing_debs(packages_file):
 
 
 def get_packages_file(packages_file):
-    with open(packages_file, 'r') as f:
-        existing_deb_str = f.read()
+    existing_deb_str = ""
+    if os.path.exists(packages_file):
+        with open(packages_file, 'r') as f:
+            existing_deb_str = f.read()
     return existing_deb_str
 
 
@@ -39,10 +41,10 @@ def main(root_path, package_file=None):
     for deb in all_debs:
         if deb in existing_debs:
             continue
-        full_deb = os.path.join([root_path, deb])
+        full_deb = os.path.join(root_path, deb)
         out = subprocess.check_output(['dpkg-deb', '-I', full_deb, 'control'])
         size = os.stat(full_deb).st_size
-        out_formatted = re.sub(r"^(Depends: .*$)", "\1\nFilename: %s\nSize: %s" % (deb, size), out, flags=re.M)
+        out_formatted = re.sub(r"^(Version: .*$)", r"\1\nFilename: %s\nSize: %s" % (deb, size), out, flags=re.M)
         output += "\n%s" % out_formatted
 
     print output
